@@ -1,5 +1,5 @@
-//def localProperties = new Properties()
-def localProperties = FileNotFoundException()
+def localProperties = new Properties()
+//def localProperties = FileNotFoundException()
 def localPropertiesFile = rootProject.file('local.properties')
 if (localPropertiesFile.exists()) {
     localPropertiesFile.withReader('UTF-8') { reader ->
@@ -9,8 +9,8 @@ if (localPropertiesFile.exists()) {
 
 def flutterRoot = localProperties.getProperty('flutter.sdk')
 if (flutterRoot == null) {
-//    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
-        FileNotFoundException()
+    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+//        FileNotFoundException()
 }
 
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode')

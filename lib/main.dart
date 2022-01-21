@@ -81,9 +81,42 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  checkForInitialMessage() async {
+    RemoteMessage? initialMessage =
+        await FirebaseMessaging.instance.getInitialMessage();
+    if (initialMessage != null) {
+      PushNotification notification = PushNotification(
+        title: initialMessage.notification!.title,
+        body: initialMessage.notification!.body,
+        dataTitle: initialMessage.data['title'],
+        dataBody: initialMessage.data['body'],
+      );
+      setState(() {
+        _totalNotificationCounter++;
+        _notificationInfo = notification;
+      });
+    }
+  }
+
   @override
   void initState() {
+    //when app is in background
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      PushNotification notification = PushNotification(
+        title: message.notification!.title,
+        body: message.notification!.body,
+        dataTitle: message.data['title'],
+        dataBody: message.data['body'],
+      );
+      setState(() {
+        _totalNotificationCounter++;
+        _notificationInfo = notification;
+      });
+    });
+    //when app is open
     registerNotification();
+    //when app is in terminated state
+    checkForInitialMessage();
     _totalNotificationCounter = 0;
     super.initState();
   }
@@ -110,6 +143,9 @@ class _MyHomePageState extends State<MyHomePage> {
               height: 16,
             ),
             NotificationBadge(totalNotification: _totalNotificationCounter),
+            SizedBox(
+              height: 16,
+            ),
             _notificationInfo != null
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
